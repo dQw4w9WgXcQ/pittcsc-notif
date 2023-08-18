@@ -5,22 +5,26 @@ let prevTextRef = { value: null };
 let prevOffseasonTextRef = { value: null };
 
 while (true) {
-  check(
-    "SUMMER",
-    "https://raw.githubusercontent.com/SimplifyJobs/Summer2024-Internships/dev/README.md",
-    "https://github.com/SimplifyJobs/Summer2024-Internships",
-    prevTextRef
-  );
+  try {
+    await check(
+      "SUMMER",
+      "https://raw.githubusercontent.com/SimplifyJobs/Summer2024-Internships/dev/README.md",
+      "https://github.com/SimplifyJobs/Summer2024-Internships",
+      prevTextRef
+    );
 
-  check(
-    "OFFSEASON",
-    "https://raw.githubusercontent.com/SimplifyJobs/Summer2024-Internships/dev/README-Off-Season.md",
-    "https://github.com/SimplifyJobs/Summer2024-Internships/blob/dev/README-Off-Season.md",
-    prevOffseasonTextRef
-  );
+    await check(
+      "OFFSEASON",
+      "https://raw.githubusercontent.com/SimplifyJobs/Summer2024-Internships/dev/README-Off-Season.md",
+      "https://github.com/SimplifyJobs/Summer2024-Internships/blob/dev/README-Off-Season.md",
+      prevOffseasonTextRef
+    );
+  } catch (e) {
+    console.log(e);
+  }
 
-  await sleep();
   console.log("\x1b[32m", ".");
+  await sleep();
 }
 
 async function check(type, rawUrl, prettyUrl, prevTextRef) {
