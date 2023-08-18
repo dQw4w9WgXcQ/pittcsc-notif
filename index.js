@@ -12,38 +12,7 @@ let prevTextOffseason = null;
 while (true) {
   let text;
   try {
-    text = await fetch(url).then((response) => response.text());
-  } catch (e) {
-    console.log(e);
-    await sleep();
-    continue;
-  }
-
-  if (prevText == null) {
-    prevText = text;
-  } else {
-    if (prevText == text) {
-      console.log("\x1b[32m", ".");
-    } else {
-      console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log("SUMMER");
-      console.log("https://github.com/SimplifyJobs/Summer2024-Internships");
-
-      notifier.notify({
-        title: "NEW JOB!!",
-        message: "NEW JOB!! summer",
-      });
-      prevText = text;
-    }
-  }
-
-  let offseasonText;
-  try {
-    offseasonText = await fetch(offseasonUrl).then((response) =>
+    text = await fetch(url, { cache: "no-store" }).then((response) =>
       response.text()
     );
   } catch (e) {
@@ -52,28 +21,55 @@ while (true) {
     continue;
   }
 
-  if (prevTextOffseason == null) {
-    prevTextOffseason = offseasonText;
+  if (prevText == text) {
+    console.log("\x1b[32m", ".");
   } else {
-    if (prevTextOffseason == offseasonText) {
-      console.log("\x1b[32m", "..");
-    } else {
-      console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
-      console.log("OFFSEASON");
-      console.log(
-        "https://github.com/SimplifyJobs/Summer2024-Internships/blob/dev/README-Off-Season.md"
-      );
+    console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("SUMMER");
+    console.log(new Date());
+    console.log("https://github.com/SimplifyJobs/Summer2024-Internships");
 
-      notifier.notify({
-        title: "NEW JOB!!",
-        message: "NEW JOB!! offseason",
-      });
-      prevTextOffseason = offseasonText;
-    }
+    notifier.notify({
+      title: "NEW JOB!!",
+      message: "summer",
+    });
+    prevText = text;
+  }
+
+  let offseasonText;
+  try {
+    offseasonText = await fetch(offseasonUrl, { cache: "no-store" }).then(
+      (response) => response.text()
+    );
+  } catch (e) {
+    console.log(e);
+    await sleep();
+    continue;
+  }
+
+  if (prevTextOffseason == offseasonText) {
+    console.log("\x1b[32m", "..");
+  } else {
+    console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("\x1b[31m", "@@@@@@@@@@@@@@@@@@@@@@@@");
+    console.log("OFFSEASON");
+    console.log(new Date());
+    console.log(
+      "https://github.com/SimplifyJobs/Summer2024-Internships/blob/dev/README-Off-Season.md"
+    );
+
+    notifier.notify({
+      title: "NEW JOB!!",
+      message: "offseason",
+    });
+    prevTextOffseason = offseasonText;
   }
 
   await sleep();
