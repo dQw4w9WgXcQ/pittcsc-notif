@@ -23,7 +23,6 @@ while (true) {
     console.log(e);
   }
 
-  console.log("\x1b[32m", ".");
   await sleep();
 }
 
