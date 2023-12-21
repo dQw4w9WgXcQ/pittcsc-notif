@@ -1,16 +1,19 @@
 {
-  "dependencies": {
-    "node-notifier": "^10.0.1"
-  },
   "name": "pitcsc-notif",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "node-notifier": "^10.0.1"
+  },
+  "devDependencies": {
+    "@types/node-notifier": "^8.0.5"
+  }
 }
