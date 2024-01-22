@@ -3,28 +3,29 @@ import notifier from "node-notifier"
 
 //.includes()
 const LOCATION_BANLIST = ["Canada"]
+const TERM_ALLOWLIST = ["Fall 2024"]
 
 let prevSummerRef = {
   text: null,
-  count: 0,
+  count: 0
 }
 
 let prevOffseasonRef = {
   text: null,
-  count: 0,
+  count: 0
 }
 
 while (true) {
-  try {
-    await poll(
-      "SUMMER",
-      "https://raw.githubusercontent.com/SimplifyJobs/Summer2024-Internships/dev/README.md",
-      "https://github.com/SimplifyJobs/Summer2024-Internships",
-      prevSummerRef
-    )
-  } catch (e) {
-    console.log(e)
-  }
+  // try {
+  //   await poll(
+  //     "SUMMER",
+  //     "https://raw.githubusercontent.com/SimplifyJobs/Summer2024-Internships/dev/README.md",
+  //     "https://github.com/SimplifyJobs/Summer2024-Internships",
+  //     prevSummerRef
+  //   )
+  // } catch (e) {
+  //   console.log(e)
+  // }
 
   try {
     await poll(
@@ -41,32 +42,43 @@ while (true) {
 }
 
 async function poll(type, rawUrl, prettyUrl, prevRef) {
-  let text = await fetch(rawUrl, { cache: "no-store" }).then((response) =>
-    response.text()
-  )
+  let text = await fetch(rawUrl, { cache: "no-store" }).then((response) => response.text())
 
   if (prevRef.text === text) return
 
-  let data = parseMarkdownTable(text, type === "OFFSEASON")
+  let jobs = parseMarkdownTable(text, type === "OFFSEASON")
 
   if (prevRef.text === null) {
     prevRef.text = text
-    prevRef.count = data.length
+    prevRef.count = jobs.length
     return
   }
 
-  let newJobsCount = data.length - prevRef.count
+  let newJobsCount = jobs.length - prevRef.count
 
-  console.log(`found ${newJobsCount} new jobs`)
-  console.log("\x1b[31m", type)
-  console.log(new Date())
-  console.log(prettyUrl)
+  let filteredNewJobsCount = 0
+  outer: for (let i = 0; i < newJobsCount; i++) {
+    let job = jobs[i]
+    for (let location of LOCATION_BANLIST) {
+      if (job.location.includes(location)) continue outer
+    }
 
-  notifier.notify({
-    title: `${newJobsCount} new jobs`,
-    message: type,
-  })
+    filteredNewJobsCount++
+  }
 
+  if (filteredNewJobsCount !== 0) {
+    console.log(`found ${filteredNewJobsCount} new jobs`)
+    console.log("\x1b[31m", type)
+    console.log(new Date())
+    console.log(prettyUrl)
+
+    notifier.notify({
+      title: `${newJobsCount} new jobs`,
+      message: type
+    })
+  }
+
+  prevRef.count = jobs.length
   prevRef.text = text
 }
 
@@ -87,13 +99,10 @@ function parseMarkdownTable(md, offseason) {
 `
   }
   md = md.split(separator)[1]
-
-  let data = []
-
   let lines = md.split("\n")
 
+  let jobs = []
   let prevCompany = null
-
   for (let line of lines) {
     if (!line) continue
 
@@ -109,7 +118,7 @@ function parseMarkdownTable(md, offseason) {
     let company
     let companyRaw = cols[i++]
     if (companyRaw.includes("[")) {
-      let match = companyRaw.match(/\[(.*?)\]/)
+      let match = companyRaw.match(/\[(.*?)]/)
       if (!match) throw new Error(`cant parse company from:${companyRaw}`)
       company = match[1]
     } else if (companyRaw.includes("↳")) {
@@ -138,13 +147,13 @@ function parseMarkdownTable(md, offseason) {
       role,
       location,
       terms, //may be undefined
-      datePosted,
+      datePosted
     }
 
-    data.push(job)
+    jobs.push(job)
   }
 
-  return data
+  return jobs
 }
 
 async function sleep() {
